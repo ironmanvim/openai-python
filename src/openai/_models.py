@@ -80,7 +80,7 @@ class _ConfigProtocol(Protocol):
 
 class BaseModel(pydantic.BaseModel):
     if PYDANTIC_V2:
-        model_config: ClassVar[ConfigDict] = ConfigDict(
+        model_config = ConfigDict(
             extra="allow", defer_build=coerce_boolean(os.environ.get("DEFER_PYDANTIC_BUILD", "true"))
         )
     else:
@@ -621,7 +621,9 @@ def _build_discriminated_union_meta(*, union: type, meta_annotations: tuple[Any,
                         if isinstance(entry, str):
                             mapping[entry] = variant
             else:
-                field_info = cast("dict[str, FieldInfo]", variant.__fields__).get(discriminator_field_name)  # pyright: ignore[reportDeprecated, reportUnnecessaryCast]
+                field_info = cast("dict[str, FieldInfo]", variant.__fields__).get(
+                    discriminator_field_name
+                )  # pyright: ignore[reportDeprecated, reportUnnecessaryCast]
                 if not field_info:
                     continue
 
@@ -671,7 +673,7 @@ def validate_type(*, type_: type[_T], value: object) -> _T:
     return cast(_T, _validate_non_model_type(type_=type_, value=value))
 
 
-def set_pydantic_config(typ: Any, config: pydantic.ConfigDict) -> None:
+def set_pydantic_config(typ: Any, config) -> None:
     """Add a pydantic config for the given type.
 
     Note: this is a no-op on Pydantic v1.
@@ -771,7 +773,7 @@ class FinalRequestOptions(pydantic.BaseModel):
     extra_json: Union[AnyMapping, None] = None
 
     if PYDANTIC_V2:
-        model_config: ClassVar[ConfigDict] = ConfigDict(arbitrary_types_allowed=True)
+        model_config = ConfigDict(arbitrary_types_allowed=True)
     else:
 
         class Config(pydantic.BaseConfig):  # pyright: ignore[reportDeprecated]
